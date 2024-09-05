@@ -1,0 +1,16 @@
+version: 1
+
+phases:
+  build:
+    commands:
+      - echo Packaging Lambda function...
+      - zip -r usercreate_lambda.zip .
+
+artifacts:
+  files:
+    - usercreate_lambda.zip
+
+post_build:
+  commands:
+    - echo Deploying to AWS Lambda...
+    - aws lambda update-function-code --function-name ImageCategorizer_UserCreate --zip-file fileb://usercreate_lambda.zip
