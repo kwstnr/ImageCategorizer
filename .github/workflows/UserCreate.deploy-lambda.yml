@@ -38,12 +38,20 @@ jobs:
 
       # Step 6: Print AWS Region and Identity (Safe to Print)
       - name: Print AWS Region and Identity (Safe Info)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           echo "Current AWS Region: ${{ secrets.AWS_REGION }}"
           aws sts get-caller-identity
 
       # Step 7: Get Lambda Layer ARNs (with error handling)
       - name: Get Lambda Layer ARNs
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
         id: get_layer_arns
         run: |
           layer_arns=""
