@@ -30,7 +30,7 @@ jobs:
 
       # Step 4: Package the Lambda function into a zip file
       - name: Zip Lambda function
-        run: zip -r UserCreate_lambda_function.zip .
+        run: zip -r UserCreate_lambda_function.zip ./aws/lambda/UserCreate
 
       # Step 5: Deploy to AWS Lambda using AWS CLI
       - name: Deploy to AWS Lambda
