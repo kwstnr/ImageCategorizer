@@ -1,34 +1,30 @@
 name: Deploy Lambda Function
 
-# Trigger the workflow on pushes to the main branch
 on:
   push:
     branches:
       - main
+      - ci/*
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the code from the GitHub repository
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Step 2: Set up Python
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: "3.12"
 
-      # Step 3: Install dependencies (if any)
       - name: Install dependencies
         run: |
           if [ -f "aws/lambda/UserCreate/requirements.txt" ]; then
             pip install -r aws/lambda/UserCreate/requirements.txt -t .
           fi
 
-      # Step 4: Package the Lambda function into a zip file
       - name: Zip Lambda function
         run: zip -r UserCreate_lambda_function.zip ./aws/lambda/UserCreate
 
@@ -40,7 +36,13 @@ jobs:
           echo "Layers to be attached: $layers"
           echo "::set-output name=layers::$layers"
 
-      # Step 6: Get Lambda Layer ARNs (with error handling)
+      # Step 6: Print AWS Region and Identity (Safe to Print)
+      - name: Print AWS Region and Identity (Safe Info)
+        run: |
+          echo "Current AWS Region: ${{ secrets.AWS_REGION }}"
+          aws sts get-caller-identity
+
+      # Step 7: Get Lambda Layer ARNs (with error handling)
       - name: Get Lambda Layer ARNs
         id: get_layer_arns
         run: |
@@ -57,19 +59,17 @@ jobs:
           done
           echo "::set-output name=layer_arns::$layer_arns"
 
-      # Step 7: Deploy the Lambda function and attach layers
+      # Step 8: Deploy to AWS Lambda
       - name: Deploy to AWS Lambda
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          # Step 7a: Update the Lambda function code
           aws lambda update-function-code \
             --function-name ${{ secrets.USERCREATE_LAMBDA_FUNCTION_NAME }} \
             --zip-file fileb://UserCreate_lambda_function.zip
 
-          # Step 7b: Attach the layers to the Lambda function
           aws lambda update-function-configuration \
             --function-name ${{ secrets.USERCREATE_LAMBDA_FUNCTION_NAME }} \
             --layers ${{ steps.get_layer_arns.outputs.layer_arns }}
