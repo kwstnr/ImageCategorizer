@@ -1,0 +1,46 @@
+name: Create Lambda Layers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-lambda-layers:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the code from the GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Install dependencies and create layers
+      - name: Create Lambda Layers
+        run: |
+          for file in aws/lambda/layers/*.layer; do
+            # Get the name of the layer from the file name (e.g., "boto3" from "boto3.layer")
+            layer_name=$(basename $file .layer)
+
+            # Create a directory for the layer
+            mkdir -p layer/python
+
+            # Install dependencies listed in the .layer file into the python/ directory
+            pip install -r $file -t layer/python
+
+            # Zip the layer
+            zip -r9 ${layer_name}_layer.zip layer
+
+            # Upload the layer to AWS Lambda
+            aws lambda publish-layer-version \
+              --layer-name $layer_name \
+              --zip-file fileb://${layer_name}_layer.zip \
+              --compatible-runtimes python3.8 python3.9 python3.10 \
+              --region ${{ secrets.AWS_REGION }}
+
+            # Clean up
+            rm -rf layer
+            rm ${layer_name}_layer.zip
+          done
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
