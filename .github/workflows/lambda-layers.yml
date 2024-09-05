@@ -34,7 +34,7 @@ jobs:
             aws lambda publish-layer-version \
               --layer-name $layer_name \
               --zip-file fileb://${layer_name}_layer.zip \
-              --compatible-runtimes python3.8 python3.9 python3.10 python3.12 \ # Added python3.12
+              --compatible-runtimes python3.12 \
               --region ${{ secrets.AWS_REGION }}
 
             # Clean up
