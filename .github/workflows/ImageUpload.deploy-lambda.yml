@@ -1,4 +1,4 @@
-name: Deploy UserCreate Lambda Function
+name: Deploy ImageUpload Lambda Function
 
 on:
   push:
@@ -23,20 +23,20 @@ jobs:
       # Step 3: Install dependencies (if any)
       - name: Install dependencies
         run: |
-          if [ -f "aws/lambda/UserCreate/requirements.txt" ]; then
-            pip install -r aws/lambda/UserCreate/requirements.txt -t .
+          if [ -f "aws/lambda/ImageUpload/requirements.txt" ]; then
+            pip install -r aws/lambda/ImageUpload/requirements.txt -t .
           fi
 
       - name: Zip Lambda function
         run: |
-          cd aws/lambda/UserCreate
-          zip -r ../../../UserCreate_lambda_function.zip .
+          cd aws/lambda/ImageUpload
+          zip -r ../../../ImageUpload_lambda_function.zip .
 
       # Step 5: Parse the config file and find the layers
       - name: Parse layer config file
         id: parse_layers
         run: |
-          layers=$(jq -r '.layers[]' aws/lambda/UserCreate/lambda.config.json)
+          layers=$(jq -r '.layers[]' aws/lambda/ImageUpload/lambda.config.json)
           echo "::set-output name=layers::$layers"
 
       # Step 6: Get Lambda Layer ARNs (with error handling)
@@ -63,14 +63,14 @@ jobs:
         run: |
           # Step 7a: Update the Lambda function code
           aws lambda update-function-code \
-            --function-name ${{ secrets.USERCREATE_LAMBDA_FUNCTION_NAME }} \
-            --zip-file fileb://UserCreate_lambda_function.zip
+            --function-name ${{ secrets.IMAGEUPLOAD_LAMBDA_FUNCTION_NAME }} \
+            --zip-file fileb://ImageUpload_lambda_function.zip
 
           # Step 7b: Wait for the Lambda code update to complete
           aws lambda wait function-updated \
-            --function-name ${{ secrets.USERCREATE_LAMBDA_FUNCTION_NAME }}
+            --function-name ${{ secrets.IMAGEUPLOAD_LAMBDA_FUNCTION_NAME }}
 
           # Step 7c: Update the Lambda function configuration (attach layers)
           aws lambda update-function-configuration \
-            --function-name ${{ secrets.USERCREATE_LAMBDA_FUNCTION_NAME }} \
+            --function-name ${{ secrets.IMAGEUPLOAD_LAMBDA_FUNCTION_NAME }} \
             --layers ${{ steps.get_layer_arns.outputs.layer_arns }}
