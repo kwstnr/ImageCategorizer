@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 import { ImageService } from '../services/image/image.service';
 
 @Component({
@@ -13,6 +14,7 @@ import { ImageService } from '../services/image/image.service';
 })
 export class ImageUploadComponent {
   private _imageService = inject(ImageService);
+  private _router = inject(Router);
 
   formData: FormData = new FormData();
   fileName?: string;
@@ -46,6 +48,12 @@ export class ImageUploadComponent {
   }
 
   async uploadFile() {
-    await this._imageService.uploadImage(this.base64Image!);
+    const result = await this._imageService.uploadImage(this.base64Image!);
+
+    if (result != null) {
+      await this._router.navigate(['/image-feedback'], {
+        state: { data: result },
+      });
+    }
   }
 }
