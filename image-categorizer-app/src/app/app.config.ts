@@ -6,7 +6,7 @@ import { Amplify } from 'aws-amplify';
 import awsConfig from '../aws-exports';
 import { routes } from './app.routes';
 
-Amplify.configure(awsConfig as any);
+Amplify.configure(awsConfig);
 
 export const appConfig: ApplicationConfig = {
   providers: [

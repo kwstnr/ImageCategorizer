@@ -1,10 +1,19 @@
-const awsConfig = {
+import { Amplify, ResourcesConfig } from 'aws-amplify';
+
+const awsConfig: ResourcesConfig = {
   Auth: {
-    region: 'us-east-1',
-    userPoolId: 'us-east-1_8ErpaXsQ2',
-    userPoolWebClientId: 'm6h1tg0do4jraifc945nfuihe',
-    mandatorySignIn: true,
+    Cognito: {
+      userPoolId: 'us-east-1_8ErpaXsQ2',
+      userPoolClientId: '31gd52nq0em5tk38v49dgd4f39',
+      userAttributes: {
+        email: {
+          required: true,
+        },
+      },
+    },
   },
 };
+
+Amplify.configure(awsConfig);
 
 export default awsConfig;
