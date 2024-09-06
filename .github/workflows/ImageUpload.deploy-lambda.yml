@@ -1,4 +1,4 @@
-name: Deploy Lambda Function
+name: Deploy ImageUpload Lambda Function
 
 on:
   push:
