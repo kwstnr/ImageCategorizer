@@ -13,6 +13,14 @@
       height: 100%;
       width: 100%;
 
+      .result {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+
       form {
         height: 100%;
 
@@ -40,6 +48,12 @@
             border: 1px dashed #e3e5ea;
           }
         }
+      }
+    }
+
+    mat-card-actions {
+      button {
+        margin: 0 0.5rem;
       }
     }
   }

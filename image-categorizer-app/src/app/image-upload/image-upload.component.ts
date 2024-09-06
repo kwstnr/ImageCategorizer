@@ -14,12 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 export class ImageUploadComponent {
   private _httpClient = inject(HttpClient);
 
-  onFileSelected(event: any, inputFile: File | null) {
+  formData: FormData = new FormData();
+  fileName?: string;
+
+  async onFileSelected(event: any, inputFile: File | null) {
     const file: File = inputFile || event.target.files[0];
 
     if (file) {
-      const formData = new FormData();
-      formData.append('file', file);
+      this.fileName = file.name;
+      this.formData.append('file', file);
     }
   }
 
@@ -34,5 +37,13 @@ export class ImageUploadComponent {
       const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
     }
+  }
+
+  clearForm() {
+    this.formData = new FormData();
+  }
+
+  uploadFile() {
+    console.log('file', this.formData.get('file'));
   }
 }

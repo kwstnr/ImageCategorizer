@@ -3,6 +3,7 @@
     <mat-card-title>Image Upload</mat-card-title>
   </mat-card-header>
   <mat-card-content>
+    @if(!formData.get('file')) {
     <form>
       <label
         for="file"
@@ -12,10 +13,36 @@
         <mat-icon>cloud_upload</mat-icon>
         <span>Drag & drop or <span>browse</span> your files</span>
       </label>
-      <input id="file" type="file" accept="image/*" />
+      <input
+        id="file"
+        type="file"
+        accept="image/*"
+        (change)="onFileSelected($event, null)"
+      />
     </form>
+    } @else {
+    <div class="result">
+      selected file:
+      <span class="file-name">{{ fileName }}</span>
+    </div>
+    }
   </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary">Upload</button>
+  <mat-card-actions align="end">
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="clearForm()"
+      [disabled]="!formData.get('file')"
+    >
+      Clear
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      [disabled]="!formData.get('file')"
+      (click)="uploadFile()"
+    >
+      Upload
+    </button>
   </mat-card-actions>
 </mat-card>
