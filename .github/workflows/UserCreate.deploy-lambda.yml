@@ -27,9 +27,10 @@ jobs:
             pip install -r aws/lambda/UserCreate/requirements.txt -t .
           fi
 
-      # Step 4: Package the Lambda function into a zip file
       - name: Zip Lambda function
-        run: zip -r UserCreate_lambda_function.zip ./aws/lambda/UserCreate
+        run: |
+          cd aws/lambda/UserCreate
+          zip -r ../../../UserCreate_lambda_function.zip .
 
       # Step 5: Parse the config file and find the layers
       - name: Parse layer config file
