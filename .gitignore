@@ -1,0 +1,33 @@
+# Dependencies
+/node_modules
+
+# Build outputs
+/dist
+/out-tsc
+
+# Angular specific
+.angular/cache
+.angular/local
+.angular/material
+
+# IDE specific
+.vscode
+.idea
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Compiled TypeScript
+*.tsbuildinfo
+
+# Environment files
+src/environments/environment*.ts
+
+# MacOS system files
+.DS_Store
+
+# Temporary files and folders
+/tmp
+/temp

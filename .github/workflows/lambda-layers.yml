@@ -3,7 +3,7 @@ name: Create Lambda Layers
 on:
   push:
     branches:
-      - main
+      - release
 
 jobs:
   create-lambda-layers:
@@ -42,5 +42,5 @@ jobs:
             rm ${layer_name}_layer.zip
           done
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_LAMBDA_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_LAMBDA_ACCESS_KEY }}
