@@ -42,8 +42,8 @@ jobs:
       # Step 6: Get Lambda Layer ARNs (with error handling)
       - name: Get Lambda Layer ARNs
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_LAMBDA_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_LAMBDA_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         id: get_layer_arns
         run: |
@@ -57,8 +57,8 @@ jobs:
       # Step 7: Deploy to AWS Lambda
       - name: Deploy to AWS Lambda
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_LAMBDA_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_LAMBDA_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
         run: |
           # Step 7a: Update the Lambda function code
