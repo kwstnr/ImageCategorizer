@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { ImageService } from '../services/image/image.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -12,10 +12,11 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './image-upload.component.scss',
 })
 export class ImageUploadComponent {
-  private _httpClient = inject(HttpClient);
+  private _imageService = inject(ImageService);
 
   formData: FormData = new FormData();
   fileName?: string;
+  base64Image?: string;
 
   async onFileSelected(event: any, inputFile: File | null) {
     const file: File = inputFile || event.target.files[0];
@@ -23,6 +24,7 @@ export class ImageUploadComponent {
     if (file) {
       this.fileName = file.name;
       this.formData.append('file', file);
+      this.base64Image = await this._imageService.getBase64(file);
     }
   }
 
@@ -43,7 +45,7 @@ export class ImageUploadComponent {
     this.formData = new FormData();
   }
 
-  uploadFile() {
-    console.log('file', this.formData.get('file'));
+  async uploadFile() {
+    await this._imageService.uploadImage(this.base64Image!);
   }
 }

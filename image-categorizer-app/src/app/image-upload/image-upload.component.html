@@ -24,6 +24,9 @@
     <div class="result">
       selected file:
       <span class="file-name">{{ fileName }}</span>
+      @if(base64Image) {
+      <img class="image" [src]="base64Image" />
+      }
     </div>
     }
   </mat-card-content>
