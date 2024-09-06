@@ -1,1 +1,21 @@
-<p>image-upload works!</p>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>Image Upload</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <form>
+      <label
+        for="file"
+        (dragover)="handleDragOver($event)"
+        (drop)="handleDrop($event)"
+      >
+        <mat-icon>cloud_upload</mat-icon>
+        <span>Drag & drop or <span>browse</span> your files</span>
+      </label>
+      <input id="file" type="file" accept="image/*" />
+    </form>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-raised-button color="primary">Upload</button>
+  </mat-card-actions>
+</mat-card>
