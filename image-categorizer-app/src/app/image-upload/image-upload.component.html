@@ -3,7 +3,11 @@
     <mat-card-title>Image Upload</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    @if(!formData.get('file')) {
+    @if (isLoading$ | async) {
+    <div class="spinner-container">
+      <mat-spinner></mat-spinner>
+    </div>
+    } @else { @if(!formData.get('file')) {
     <form>
       <label
         for="file"
@@ -28,21 +32,21 @@
       <img class="image" [src]="base64Image" />
       }
     </div>
-    }
+    } }
   </mat-card-content>
   <mat-card-actions align="end">
     <button
       mat-raised-button
       color="warn"
       (click)="clearForm()"
-      [disabled]="!formData.get('file')"
+      [disabled]="!formData.get('file') || (isLoading$ | async)"
     >
       Clear
     </button>
     <button
       mat-raised-button
       color="primary"
-      [disabled]="!formData.get('file')"
+      [disabled]="!formData.get('file') || (isLoading$ | async)"
       (click)="uploadFile()"
     >
       Upload

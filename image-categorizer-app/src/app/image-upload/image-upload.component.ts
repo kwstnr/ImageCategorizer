@@ -1,18 +1,34 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BehaviorSubject, first } from 'rxjs';
+import { ImageFeedbackComponent } from '../image-feedback/image-feedback.component';
 import { ImageService } from '../services/image/image.service';
 
 @Component({
   selector: 'app-image-upload',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    ImageFeedbackComponent,
+    AsyncPipe,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.scss',
 })
 export class ImageUploadComponent {
   private _imageService = inject(ImageService);
+  private readonly _dialog = inject(MatDialog);
+
+  private readonly _isLoadingSubject = new BehaviorSubject<boolean>(false);
+  readonly isLoading$ = this._isLoadingSubject.asObservable();
 
   formData: FormData = new FormData();
   fileName?: string;
@@ -36,7 +52,6 @@ export class ImageUploadComponent {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
     }
   }
@@ -46,6 +61,18 @@ export class ImageUploadComponent {
   }
 
   async uploadFile() {
-    await this._imageService.uploadImage(this.base64Image!);
+    this._isLoadingSubject.next(true);
+    const response = await this._imageService.uploadImage(this.base64Image!);
+    this._isLoadingSubject.next(false);
+
+    if (response != null) {
+      this._dialog
+        .open(ImageFeedbackComponent, {
+          data: { response, image: this.base64Image },
+        })
+        .afterClosed()
+        .pipe(first())
+        .subscribe(() => this.clearForm());
+    }
   }
 }
