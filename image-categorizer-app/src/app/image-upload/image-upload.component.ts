@@ -1,9 +1,11 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { first } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { BehaviorSubject, first } from 'rxjs';
 import { ImageFeedbackComponent } from '../image-feedback/image-feedback.component';
 import { ImageService } from '../services/image/image.service';
 
@@ -15,6 +17,8 @@ import { ImageService } from '../services/image/image.service';
     MatButtonModule,
     MatIconModule,
     ImageFeedbackComponent,
+    AsyncPipe,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.scss',
@@ -22,6 +26,9 @@ import { ImageService } from '../services/image/image.service';
 export class ImageUploadComponent {
   private _imageService = inject(ImageService);
   private readonly _dialog = inject(MatDialog);
+
+  private readonly _isLoadingSubject = new BehaviorSubject<boolean>(false);
+  readonly isLoading$ = this._isLoadingSubject.asObservable();
 
   formData: FormData = new FormData();
   fileName?: string;
@@ -54,7 +61,9 @@ export class ImageUploadComponent {
   }
 
   async uploadFile() {
+    this._isLoadingSubject.next(true);
     const response = await this._imageService.uploadImage(this.base64Image!);
+    this._isLoadingSubject.next(false);
 
     if (response != null) {
       this._dialog
