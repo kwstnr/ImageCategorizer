@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { ImageUploadResponse } from '../../model/image-upload-response.model';
 
 @Injectable({
@@ -36,9 +36,30 @@ export class ImageService {
       });
 
       return firstValueFrom(
-        this._http.post<ImageUploadResponse>(this.apiUrl, body, { headers })
+        this._http
+          .post<ImageUploadResponse>(this.apiUrl, body, { headers })
+          .pipe(map(() => ({ s3Id: '123', category: 'test' })))
       );
     }
     return null;
+  }
+
+  async sendFeedback(s3Id: string, correct: boolean): Promise<any> {
+    const body = {
+      correct,
+    };
+
+    const session = await fetchAuthSession();
+    const token = session.tokens?.idToken?.toString();
+
+    if (token) {
+      const headers = new HttpHeaders({
+        Authorization: token,
+      });
+
+      return firstValueFrom(
+        this._http.put(`${this.apiUrl}/${s3Id}`, body, { headers })
+      );
+    }
   }
 }
