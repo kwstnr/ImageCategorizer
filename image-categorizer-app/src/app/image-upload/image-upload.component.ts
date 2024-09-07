@@ -1,20 +1,27 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { Router } from '@angular/router';
+import { first } from 'rxjs';
+import { ImageFeedbackComponent } from '../image-feedback/image-feedback.component';
 import { ImageService } from '../services/image/image.service';
 
 @Component({
   selector: 'app-image-upload',
   standalone: true,
-  imports: [MatCardModule, MatButtonModule, MatIconModule],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    ImageFeedbackComponent,
+  ],
   templateUrl: './image-upload.component.html',
   styleUrl: './image-upload.component.scss',
 })
 export class ImageUploadComponent {
   private _imageService = inject(ImageService);
-  private _router = inject(Router);
+  private readonly _dialog = inject(MatDialog);
 
   formData: FormData = new FormData();
   fileName?: string;
@@ -38,7 +45,6 @@ export class ImageUploadComponent {
   handleDrop(event: DragEvent) {
     event.preventDefault();
     if (event.dataTransfer) {
-      const file: File = event.dataTransfer.files[0];
       this.onFileSelected(event, event.dataTransfer.files[0]);
     }
   }
@@ -48,12 +54,16 @@ export class ImageUploadComponent {
   }
 
   async uploadFile() {
-    const result = await this._imageService.uploadImage(this.base64Image!);
+    const response = await this._imageService.uploadImage(this.base64Image!);
 
-    if (result != null) {
-      await this._router.navigate(['/image-feedback'], {
-        state: { data: result },
-      });
+    if (response != null) {
+      this._dialog
+        .open(ImageFeedbackComponent, {
+          data: { response, image: this.base64Image },
+        })
+        .afterClosed()
+        .pipe(first())
+        .subscribe(() => this.clearForm());
     }
   }
 }

@@ -1,1 +1,22 @@
-<p>image-feedback works!</p>
+<h4 mat-dialog-title>Image Categorized!</h4>
+<mat-dialog-content>
+  @if(data) {
+  <div class="result">
+    <img class="image" [src]="data.image" />
+    <p class="categories">
+      categorized as <b>{{ data.response.category }}</b
+      >. Is this correct?
+    </p>
+  </div>
+  }
+</mat-dialog-content>
+<mat-dialog-actions>
+  @if(data) {
+  <button mat-raised-button color="warn" (click)="sendFeedback(false)">
+    False
+  </button>
+  <button mat-raised-button color="primary" (click)="sendFeedback(true)">
+    Correct
+  </button>
+  }
+</mat-dialog-actions>

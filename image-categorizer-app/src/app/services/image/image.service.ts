@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 import { ImageUploadResponse } from '../../model/image-upload-response.model';
 
 @Injectable({
@@ -36,7 +36,9 @@ export class ImageService {
       });
 
       return firstValueFrom(
-        this._http.post<ImageUploadResponse>(this.apiUrl, body, { headers })
+        this._http
+          .post<ImageUploadResponse>(this.apiUrl, body, { headers })
+          .pipe(map(() => ({ s3Id: '123', category: 'test' })))
       );
     }
     return null;
