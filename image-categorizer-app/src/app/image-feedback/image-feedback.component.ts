@@ -7,6 +7,7 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { ImageUploadResponse } from '../model/image-upload-response.model';
+import { ImageService } from '../services/image/image.service';
 
 @Component({
   selector: 'app-image-feedback',
@@ -17,15 +18,15 @@ import { ImageUploadResponse } from '../model/image-upload-response.model';
 })
 export class ImageFeedbackComponent {
   private readonly _dialogRef = inject(MatDialogRef);
+  private readonly _imageService = inject(ImageService);
+
   readonly data = inject<{
     response: ImageUploadResponse;
     image: string;
   }>(MAT_DIALOG_DATA);
 
   async sendFeedback(feedback: boolean) {
-    if (this.data) {
-      console.log(`Feedback: ${feedback}`);
-    }
+    await this._imageService.sendFeedback(this.data.response.s3Id, feedback);
     this._dialogRef.close();
   }
 }

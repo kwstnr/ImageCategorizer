@@ -43,4 +43,23 @@ export class ImageService {
     }
     return null;
   }
+
+  async sendFeedback(s3Id: string, correct: boolean): Promise<any> {
+    const body = {
+      correct,
+    };
+
+    const session = await fetchAuthSession();
+    const token = session.tokens?.idToken?.toString();
+
+    if (token) {
+      const headers = new HttpHeaders({
+        Authorization: token,
+      });
+
+      return firstValueFrom(
+        this._http.put(`${this.apiUrl}/${s3Id}`, body, { headers })
+      );
+    }
+  }
 }
