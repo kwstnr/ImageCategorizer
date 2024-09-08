@@ -23,10 +23,6 @@ export class ImageService {
   }
 
   async uploadImage(imageBase64: string): Promise<ImageUploadResponse | null> {
-    const body = {
-      image: imageBase64,
-    };
-
     const session = await fetchAuthSession();
     const token = session.tokens?.idToken?.toString();
 
@@ -36,7 +32,11 @@ export class ImageService {
       });
 
       return firstValueFrom(
-        this._http.post<ImageUploadResponse>(this.apiUrl, body, { headers })
+        this._http.post<ImageUploadResponse>(
+          this.apiUrl,
+          { image: imageBase64, user: session.userSub },
+          { headers }
+        )
       );
     }
     return null;
