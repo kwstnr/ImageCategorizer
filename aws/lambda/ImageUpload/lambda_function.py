@@ -5,6 +5,7 @@ import uuid
 
 s3_client = boto3.client('s3')
 rekognition_client = boto3.client('rekognition', region_name="us-east-1")
+dynamodb = boto3.resource('dynamodb')
 
 BUCKET_NAME = 'image-categorizer-images'
 
@@ -72,14 +73,24 @@ def lambda_handler(event, context):
         # Get the label with the highest confidence
         best_label = max(labels, key=lambda label: label['Confidence'])
         category = best_label['Name']
+        
+        table = dynamodb.Table('ImageCategorizerImages')
+
+        item = {
+            'CognitoUserId': user_id,
+            'S3Url': file_name,
+            'Category': category
+        }
+        
+        table.put_item(Item=item)
 
         return {
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({
                 'message': 'Image uploaded and categorized successfully!',
-                's3Key': file_name,
-                'category': category  # Return the category found
+                's3Id': file_name,
+                'category': category
             })
         }
 
