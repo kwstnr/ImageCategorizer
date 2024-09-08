@@ -4,6 +4,7 @@ import json
 import uuid
 
 s3_client = boto3.client('s3')
+rekognition_client = boto3.client('rekognition', region_name="us-east-1")
 
 BUCKET_NAME = 'image-categorizer-images'
 
@@ -47,12 +48,38 @@ def lambda_handler(event, context):
             ContentType='image/png'  # Adjust the content type if necessary
         )
 
+        # Call AWS Rekognition to analyze the image
+        rekognition_response = rekognition_client.detect_labels(
+            Image={
+                'S3Object': {
+                    'Bucket': BUCKET_NAME,
+                    'Name': file_name
+                }
+            },
+            MaxLabels=10,  # Maximum number of labels to return
+            MinConfidence=70  # Minimum confidence level for label detection
+        )
+
+        # Find the label with the highest confidence score
+        labels = rekognition_response.get('Labels', [])
+        if not labels:
+            return {
+                'statusCode': 200,
+                'headers': headers,
+                'body': json.dumps('No labels found in the image.')
+            }
+
+        # Get the label with the highest confidence
+        best_label = max(labels, key=lambda label: label['Confidence'])
+        category = best_label['Name']
+
         return {
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({
-                'message': 'Image uploaded successfully!',
-                's3Key': file_name  # You can return the S3 key for further reference
+                'message': 'Image uploaded and categorized successfully!',
+                's3Key': file_name,
+                'category': category  # Return the category found
             })
         }
 
@@ -60,5 +87,5 @@ def lambda_handler(event, context):
         return {
             'statusCode': 500,
             'headers': headers,
-            'body': json.dumps(f'Error uploading image to S3: {str(e)}')
+            'body': json.dumps(f'Error: {str(e)}')
         }
