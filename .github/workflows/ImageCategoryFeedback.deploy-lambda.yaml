@@ -63,14 +63,17 @@ jobs:
         run: |
           # Step 7a: Update the Lambda function code
           aws lambda update-function-code \
-            --function-name ${{ secrets.IMAGECATEGORYFEEDBACK_LAMBDA_FUNCTION_NAME }} \
+            --function-name ImageCategorizer_ImageCategoryFeedback \ 
             --zip-file fileb://ImageCategoryFeedback_lambda_function.zip
 
           # Step 7b: Wait for the Lambda code update to complete
           aws lambda wait function-updated \
-            --function-name ${{ secrets.IMAGECATEGORYFEEDBACK_LAMBDA_FUNCTION_NAME }}
+            --function-name ImageCategorizer_ImageCategoryFeedback
 
           # Step 7c: Update the Lambda function configuration (attach layers)
           aws lambda update-function-configuration \
-            --function-name ${{ secrets.IMAGECATEGORYFEEDBACK_LAMBDA_FUNCTION_NAME }} \
+            --function-name ImageCategorizer_ImageCategoryFeedback \
             --layers ${{ steps.get_layer_arns.outputs.layer_arns }}
+
+
+#ToDo: Replace function name with github secret
