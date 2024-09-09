@@ -3,15 +3,14 @@
     <mat-card-title>Statistics</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    @if (isLoading$ | async) {
+    @if (statistics$ | async; as statistics) {
+    <div class="result"></div>
+    <p class="categories">
+      Total images uploaded: <b>{{ statistics }}</b>
+    </p>
+    } @else {
     <div class="spinner-container">
       <mat-spinner></mat-spinner>
-    </div>
-    } @else {
-    <div class="result">
-      <p class="categories">
-        Total images uploaded: <b>{{ statistics }}</b>
-      </p>
     </div>
     }
   </mat-card-content>
