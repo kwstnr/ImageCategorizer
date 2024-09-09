@@ -22,6 +22,7 @@
     "@angular/router": "^18.1.0",
     "@aws-amplify/ui-angular": "^5.0.21",
     "aws-amplify": "^6.6.0",
+    "image-categorizer-app": "file:",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.3"
