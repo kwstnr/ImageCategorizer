@@ -1,11 +1,7 @@
 <mat-card>
-  <mat-card-header>
-    <mat-card-title>Statistics</mat-card-title>
-  </mat-card-header>
   <mat-card-content>
     @if (statistics$ | async; as statistics) {
       <mat-grid-list cols="2" rowHeight="100px" gutterSize="20px">
-        <!-- Overall Statistics -->
         <mat-grid-tile>
           <mat-card>
             <mat-card-header>
@@ -22,7 +18,6 @@
           </mat-card>
         </mat-grid-tile>
 
-        <!-- User Statistics -->
         <mat-grid-tile>
           <mat-card>
             <mat-card-header>
