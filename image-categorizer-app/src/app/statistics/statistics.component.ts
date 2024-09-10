@@ -7,6 +7,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { from, Observable } from 'rxjs';
 import { StatisticsResponse } from '../model/statistics-response.model';
 import { StatisticsService } from '../services/statistics/statistics.service';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 @Component({
   selector: 'app-statistics',
@@ -17,6 +18,7 @@ import { StatisticsService } from '../services/statistics/statistics.service';
     MatIconModule,
     AsyncPipe,
     MatProgressSpinnerModule,
+    MatGridListModule
   ],
   templateUrl: './statistics.component.html',
   styleUrl: './statistics.component.scss',

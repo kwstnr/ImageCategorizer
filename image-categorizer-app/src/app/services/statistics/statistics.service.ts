@@ -25,6 +25,7 @@ export class StatisticsService {
   async getStatistics(): Promise<StatisticsResponse | null> {
     const session = await fetchAuthSession();
     const token = session.tokens?.idToken?.toString();
+    const userId = session.userSub;
 
     if (token) {
       const headers = new HttpHeaders({
@@ -32,11 +33,7 @@ export class StatisticsService {
       });
 
       return firstValueFrom(
-        this._http.post<StatisticsResponse>(
-          this.apiUrl,
-          { user: session.userSub },
-          { headers }
-        )
+        this._http.get<StatisticsResponse>(`${this.apiUrl}/${userId}`, { headers })
       );
     }
     return null;

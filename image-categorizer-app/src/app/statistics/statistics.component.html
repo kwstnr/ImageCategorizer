@@ -4,14 +4,45 @@
   </mat-card-header>
   <mat-card-content>
     @if (statistics$ | async; as statistics) {
-    <div class="result"></div>
-    <p class="categories">
-      Total images uploaded: <b>{{ statistics }}</b>
-    </p>
+      <mat-grid-list cols="2" rowHeight="100px" gutterSize="20px">
+        <!-- Overall Statistics -->
+        <mat-grid-tile>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>Overall Statistics</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="categories">
+                Correct: <b>{{ statistics.overall.correct }}</b>
+              </p>
+              <p class="categories">
+                Incorrect: <b>{{ statistics.overall.incorrect }}</b>
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+
+        <!-- User Statistics -->
+        <mat-grid-tile>
+          <mat-card>
+            <mat-card-header>
+              <mat-card-title>User Statistics</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <p class="categories">
+                Correct: <b>{{ statistics.user.correct }}</b>
+              </p>
+              <p class="categories">
+                Incorrect: <b>{{ statistics.user.incorrect }}</b>
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
     } @else {
-    <div class="spinner-container">
-      <mat-spinner></mat-spinner>
-    </div>
+      <div class="spinner-container">
+        <mat-spinner></mat-spinner>
+      </div>
     }
   </mat-card-content>
 </mat-card>
