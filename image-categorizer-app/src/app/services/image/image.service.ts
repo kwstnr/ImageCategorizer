@@ -44,7 +44,7 @@ export class ImageService {
 
   async sendFeedback(s3Id: string, correct: boolean): Promise<any> {
     const body = {
-      correct,
+      correct
     };
 
     const session = await fetchAuthSession();
@@ -52,7 +52,7 @@ export class ImageService {
 
     if (token) {
       const headers = new HttpHeaders({
-        Authorization: token,
+        Authorization: token
       });
 
       return firstValueFrom(
