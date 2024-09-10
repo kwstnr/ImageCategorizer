@@ -26,7 +26,10 @@ export class ImageFeedbackComponent {
   }>(MAT_DIALOG_DATA);
 
   async sendFeedback(feedback: boolean) {
-    await this._imageService.sendFeedback(this.data.response.s3Id, feedback);
-    this._dialogRef.close();
+    const response = await this._imageService.sendFeedback(this.data.response.s3Id, feedback);
+    if (response != null) {
+      alert(response.message);
+      this._dialogRef.close();
+    }
   }
 }

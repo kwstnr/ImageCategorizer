@@ -2,14 +2,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { fetchAuthSession } from 'aws-amplify/auth';
 import { firstValueFrom } from 'rxjs';
-import { ImageUploadResponse } from '../../model/image-upload-response.model';
+import { StatisticsResponse } from '../../model/statistics-response.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ImageService {
+export class StatisticsService {
   private apiUrl =
-    'https://cc6fj90h7d.execute-api.us-east-1.amazonaws.com/v1/image';
+    'https://cc6fj90h7d.execute-api.us-east-1.amazonaws.com/v1/statistics';
 
   constructor(private _http: HttpClient) {}
 
@@ -22,9 +22,10 @@ export class ImageService {
     });
   }
 
-  async uploadImage(imageBase64: string): Promise<ImageUploadResponse | null> {
+  async getStatistics(): Promise<StatisticsResponse | null> {
     const session = await fetchAuthSession();
     const token = session.tokens?.idToken?.toString();
+    const userId = session.userSub;
 
     if (token) {
       const headers = new HttpHeaders({
@@ -32,32 +33,9 @@ export class ImageService {
       });
 
       return firstValueFrom(
-        this._http.post<ImageUploadResponse>(
-          this.apiUrl,
-          { image: imageBase64, user: session.userSub },
-          { headers }
-        )
+        this._http.get<StatisticsResponse>(`${this.apiUrl}/${userId}`, { headers })
       );
     }
     return null;
-  }
-
-  async sendFeedback(s3Id: string, correct: boolean): Promise<any> {
-    const body = {
-      correct
-    };
-
-    const session = await fetchAuthSession();
-    const token = session.tokens?.idToken?.toString();
-
-    if (token) {
-      const headers = new HttpHeaders({
-        Authorization: token
-      });
-
-      return firstValueFrom(
-        this._http.put(`${this.apiUrl}/${s3Id}`, body, { headers })
-      );
-    }
   }
 }
