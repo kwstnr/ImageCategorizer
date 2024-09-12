@@ -28,7 +28,6 @@ export class ImageFeedbackComponent {
   async sendFeedback(feedback: boolean) {
     const response = await this._imageService.sendFeedback(this.data.response.s3Id, feedback);
     if (response != null) {
-      alert(response.message);
       this._dialogRef.close();
     }
   }
